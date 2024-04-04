@@ -9,7 +9,7 @@ public class InsertionSortValidator : MonoBehaviour, ISwapValidator
     private int i = 1;
     private int j = 0;
     private int key;
-    public bool IsValidSwap(GameObject[] nodes, int index1, int index2, int startIndex)
+    public bool IsValidSwap(GameObject[] nodes, int index1, int index2)
     {
         while (j < 0 || j >= 0 && numbersToBeSorted[j] < key)
         {

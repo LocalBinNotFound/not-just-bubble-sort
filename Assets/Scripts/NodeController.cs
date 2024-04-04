@@ -34,9 +34,6 @@ public class NodeController : MonoBehaviour
     private Vector3[] snapPositions;
     private bool isSwapping = false;
 
-    private int startIndex;  //the index of node to be swapped
-
-
     void Start() {
         audioSource = GetComponentInChildren<AudioSource>();
         itemManager = FindObjectOfType<ItemManager>();
@@ -94,7 +91,6 @@ public class NodeController : MonoBehaviour
             numbersToBeSorted[i] = randomNumber;
             }
 
-        startIndex = 0;
         swapValidator.SetNumbersToBeSorted(numbersToBeSorted);
     }
 
@@ -216,7 +212,7 @@ public class NodeController : MonoBehaviour
         int node1Index = System.Array.IndexOf(allNodes, node1);
         int node2Index = System.Array.IndexOf(allNodes, node2);
 
-        if (!swapValidator.IsValidSwap(allNodes, node1Index, node2Index, startIndex)) {
+        if (!swapValidator.IsValidSwap(allNodes, node1Index, node2Index)) {
             audioSource.PlayOneShot(incorrectSound);
             StartCoroutine(FlashNodeColor(node1, Color.red, 0.25f));
             StartCoroutine(FlashNodeColor(node2, Color.red, 0.25f));
@@ -236,8 +232,6 @@ public class NodeController : MonoBehaviour
 
             allNodes[node1Index] = node2;
             allNodes[node2Index] = node1;
-
-            startIndex++;
 
             if (selectedNode != null) {
                 selectedNode.transform.localScale /= 1.2f;

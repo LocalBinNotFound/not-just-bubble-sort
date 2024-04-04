@@ -11,7 +11,7 @@ public class BubbleSortValidator : MonoBehaviour, ISwapValidator {
         sortedBoundary = numbersToBeSorted.Length-1;
     }
 
-    public bool IsValidSwap(GameObject[] nodes, int index1, int index2, int startIndex) {
+    public bool IsValidSwap(GameObject[] nodes, int index1, int index2) {
         if (index1 != index2 - 1) return false;
 
         if (index1 >= sortedBoundary || index2 > sortedBoundary) return false;
