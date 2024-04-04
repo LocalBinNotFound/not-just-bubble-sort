@@ -1,5 +1,7 @@
 # NotJustBubbleSort
 
+## NOTE: This is a continuous development from repo https://github.com/CS5520FeinbergSpring2024/team-project-a6-group9 due to LFS data quota issues.
+
 ## Install Git LFS first!!!
 To install, use homebrew `brew install git-lfs`
 
