@@ -23,16 +23,19 @@ public class LevelSelectManager : MonoBehaviour
         int endSceneIndex = Mathf.Min(startSceneIndex + levelsPerPage-1, totalLevels+1);
         Debug.Log((startSceneIndex, endSceneIndex));
 
-        for (int levelIndex = startSceneIndex; levelIndex <= endSceneIndex; levelIndex++)
+        for (int sceneIndex = startSceneIndex; sceneIndex <= endSceneIndex; sceneIndex++)
         {
-            int starsEarned = LoadStarsEarned(levelIndex-1);
-            bool isUnlocked = (levelIndex == 2) || LoadStarsEarned(levelIndex - 1) >= 2;
+            int levelIndex = sceneIndex-1;
+            int starsEarned = LoadStarsEarned(levelIndex);
+            bool isUnlocked = (levelIndex == 1) || LoadStarsEarned(levelIndex - 1) >= 2;
+            Debug.Log($"Level {levelIndex} has {starsEarned} stars");
+
 
             GameObject levelContainerPrefab = isUnlocked ? unlockedLevelContainerPrefab : lockedLevelContainerPrefab;
             GameObject levelContainer = Instantiate(levelContainerPrefab, levelGridParent);
             LevelContainer levelContainerScript = levelContainer.GetComponent<LevelContainer>();
 
-            levelContainerScript.SetupLevel(levelIndex-1, starsEarned, isUnlocked, levelLoader);
+            levelContainerScript.SetupLevel(levelIndex, starsEarned, isUnlocked, levelLoader);
         }
     }
     private int LoadStarsEarned(int levelIndex)
