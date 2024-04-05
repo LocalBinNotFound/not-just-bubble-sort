@@ -20,17 +20,17 @@ public class LevelSelectManager : MonoBehaviour
         int totalLevels = SceneManager.sceneCountInBuildSettings - 2; // Excluding main menu and level select scenes
         int startLevel = currentPage * levelsPerPage;
         int endLevel = Mathf.Min(startLevel + levelsPerPage, totalLevels);
-
-        for (int levelIndex = startLevel; levelIndex < endLevel; levelIndex++)
+        
+        for (int levelIndex = startLevel+1; levelIndex <= endLevel; levelIndex++)
         {
             int starsEarned = LoadStarsEarned(levelIndex);
-            bool isUnlocked = (levelIndex == 0) || LoadStarsEarned(levelIndex - 1) >= 2;
+            bool isUnlocked = (levelIndex == 1) || LoadStarsEarned(levelIndex - 1) >= 2;
 
             GameObject levelContainerPrefab = isUnlocked ? unlockedLevelContainerPrefab : lockedLevelContainerPrefab;
             GameObject levelContainer = Instantiate(levelContainerPrefab, levelGridParent);
             LevelContainer levelContainerScript = levelContainer.GetComponent<LevelContainer>();
         
-            levelContainerScript.SetupLevel(levelIndex + 1, starsEarned);
+            levelContainerScript.SetupLevel(levelIndex, starsEarned);
         }
     }
 

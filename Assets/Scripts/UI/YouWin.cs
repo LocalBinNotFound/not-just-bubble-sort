@@ -44,7 +44,7 @@ public class YouWin : MonoBehaviour
 
     public void SaveStarsEarned(int levelIndex, int starsEarned)
     {
-        string key = "Level " + levelIndex;
+        string key = "Level_" + levelIndex;
         int currentStars = PlayerPrefs.GetInt(key, 0);
 
         if (starsEarned > currentStars)
