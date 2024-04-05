@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class NodeController : MonoBehaviour
 {
@@ -179,8 +180,6 @@ public class NodeController : MonoBehaviour
             var swapPair = swapValidator.GetNextSwap(allNodes);
             if (swapPair.Item1 != -1 && swapPair.Item2 != -1) {
                 StartCoroutine(SwapPositions(allNodes[swapPair.Item1], allNodes[swapPair.Item2]));
-            } else {
-                Debug.Log("No swap needed or hint not applicable.");
             }
             UpdateHintCountUI();
         }
@@ -195,12 +194,15 @@ public class NodeController : MonoBehaviour
 
     public void PauseGameInteractivity() {
         isGamePaused = true;
-        Debug.Log($"pause state: {isGamePaused}");
     }
 
     public void UnpauseGameInteractivity() {
         isGamePaused = false;
-        Debug.Log($"pause state: {isGamePaused}");
+    }
+
+    public int GetCurrentSceneIndex()
+    {
+        return SceneManager.GetActiveScene().buildIndex;
     }
 
 

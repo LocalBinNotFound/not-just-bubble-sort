@@ -31,6 +31,8 @@ public class YouWin : MonoBehaviour
         else if (itemManager.LifeCount >= 3) starsEarned = 2;
         else if (itemManager.LifeCount >= 1) starsEarned = 1;
 
+        SaveStarsEarned(nodeController.GetCurrentSceneIndex(), starsEarned);
+
         int coinsToAdd = (starsEarned == 3) ? 100 : (starsEarned == 2) ? 60 : 30;
         Wallet.SetAmount(Wallet.GetAmount() + coinsToAdd);
 
@@ -38,6 +40,18 @@ public class YouWin : MonoBehaviour
         backgroundAudioSource.PlayOneShot(winningSound);
 
         StartCoroutine(DisplayStarsSequence(starsEarned));
+    }
+
+    public void SaveStarsEarned(int levelIndex, int starsEarned)
+    {
+        string key = "Level " + levelIndex;
+        int currentStars = PlayerPrefs.GetInt(key, 0);
+
+        if (starsEarned > currentStars)
+        {
+            PlayerPrefs.SetInt(key, starsEarned);
+            PlayerPrefs.Save();
+        }
     }
 
     private IEnumerator DisplayStarsSequence(int starsEarned)
