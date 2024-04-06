@@ -5,26 +5,13 @@ using UnityEngine;
 
 public class InsertionSortValidator : MonoBehaviour, ISwapValidator
 {
-    private int[] numbersToBeSorted;
-    private int i = 1;
-    private int j = 0;
-    private int key;
+    private int curIdx = 0;
+    private List<(int, int)> swapOrders = new();
     public bool IsValidSwap(GameObject[] nodes, int index1, int index2)
     {
-        while (j < 0 || j >= 0 && numbersToBeSorted[j] < key)
+        if (curIdx < swapOrders.Count && (swapOrders[curIdx].Equals((index1, index2)) || swapOrders[curIdx].Equals((index2, index1))))
         {
-            i++;
-            j = i - 1;
-            if (i >= numbersToBeSorted.Length)
-            {
-                return false;
-            }
-            key = numbersToBeSorted[i];
-        }
-        if (index1 == j && index2 == j + 1 || index1 == j + 1 && index2 == j)
-        {
-            (numbersToBeSorted[j], numbersToBeSorted[j + 1]) = (numbersToBeSorted[j + 1], numbersToBeSorted[j]);
-            j--;
+            curIdx++;
             return true;
         }
         return false;
@@ -32,11 +19,17 @@ public class InsertionSortValidator : MonoBehaviour, ISwapValidator
 
     public void SetNumbersToBeSorted(int[] numbersToBeSorted)
     {
-        this.numbersToBeSorted = numbersToBeSorted;
-        key = numbersToBeSorted[i];
+        for (int i = 1; i < numbersToBeSorted.Length; i++)
+        {
+            for (int j = i - 1; j >= 0 && numbersToBeSorted[j] > numbersToBeSorted[j + 1]; j--)
+            {
+                swapOrders.Add((j, j + 1));
+                (numbersToBeSorted[j], numbersToBeSorted[j + 1]) = (numbersToBeSorted[j + 1], numbersToBeSorted[j]);
+            }
+        }
     }
 
     public (int, int) GetNextSwap(GameObject[] nodes) {
-        return (-1, -1);
+        return curIdx < swapOrders.Count ? swapOrders[curIdx++] : (-1, -1);
     }
 }
