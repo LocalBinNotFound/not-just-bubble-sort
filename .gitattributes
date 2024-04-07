@@ -17,3 +17,4 @@ Assets/Scenes/SelectionSort3.unity filter=lfs diff=lfs merge=lfs -text
 Assets/Scenes/ShellSort1.unity filter=lfs diff=lfs merge=lfs -text
 Assets/Scenes/ShellSort2.unity filter=lfs diff=lfs merge=lfs -text
 Assets/Scenes/ShellSort3.unity filter=lfs diff=lfs merge=lfs -text
+ProjectSettings/EditorBuildSettings.asset filter=lfs diff=lfs merge=lfs -text

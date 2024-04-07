@@ -31,7 +31,7 @@ public class YouWin : MonoBehaviour
         else if (itemManager.LifeCount >= 3) starsEarned = 2;
         else if (itemManager.LifeCount >= 1) starsEarned = 1;
 
-        SaveStarsEarned(nodeController.GetCurrentSceneIndex(), starsEarned);
+        SaveStarsEarned(nodeController.GetCurrentSceneIndex()-1, starsEarned);
 
         int coinsToAdd = (starsEarned == 3) ? 100 : (starsEarned == 2) ? 60 : 30;
         Wallet.SetAmount(Wallet.GetAmount() + coinsToAdd);
