@@ -194,10 +194,12 @@ public class NodeController : MonoBehaviour
 
     public void PauseGameInteractivity() {
         isGamePaused = true;
+        Debug.Log("Game interactivity paused.");
     }
 
     public void UnpauseGameInteractivity() {
         isGamePaused = false;
+        Debug.Log("Game interactivity resumed.");
     }
 
     public int GetCurrentSceneIndex()
