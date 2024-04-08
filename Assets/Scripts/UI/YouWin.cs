@@ -56,10 +56,6 @@ public class YouWin : MonoBehaviour
 
     private IEnumerator DisplayStarsSequence(int starsEarned)
     {
-        int initialCoins = Wallet.GetAmount();
-        int coinsToAdd = (starsEarned == 3) ? 100 : (starsEarned == 2) ? 60 : 30;
-        int finalCoins = initialCoins + coinsToAdd;
-
         yield return new WaitForSecondsRealtime(0.5f);
 
         if (starsEarned >= 1) {
