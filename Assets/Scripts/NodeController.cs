@@ -51,8 +51,8 @@ public class NodeController : MonoBehaviour
 
         livesText.text = $"{itemManager.LifeCount}";
 
-        hintsText.text = $"{itemManager?.HintCount ?? 0}";
-        autoCompleteText.text=$"{itemManager?.AutoCompleteCount ?? 0}";
+        hintsText.text = $"{PlayerPrefs.GetInt("Hints")}";
+        autoCompleteText.text=$"{PlayerPrefs.GetInt("AutoComplete")}";
         coinsText.text=$"{Wallet.GetAmount()}";
     }
 
@@ -61,7 +61,17 @@ public class NodeController : MonoBehaviour
 
         isGamePaused = false;
 
-        Wallet.SetAmount(999); 
+        // test env
+        //Wallet.SetAmount(999); 
+
+        //prod env
+        if (!PlayerPrefs.HasKey("WalletAmount"))
+        {
+            PlayerPrefs.SetInt("WalletAmount", 100);
+            PlayerPrefs.Save();
+        }
+
+        Wallet.SetAmount(PlayerPrefs.GetInt("WalletAmount"));
 
         allNodes = new GameObject[numNodes];
         numbersToBeSorted = new int[numNodes];

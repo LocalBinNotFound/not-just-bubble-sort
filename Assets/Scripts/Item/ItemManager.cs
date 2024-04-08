@@ -1,8 +1,8 @@
 using UnityEngine;
 
 public class ItemManager : MonoBehaviour {
-    private int hintCount = 15;
-    private int autoCompleteCount = 2;
+    private int hintCount;
+    private int autoCompleteCount;
     private int lifeCount = 5;
     public int HintCount => hintCount;
     public int AutoCompleteCount => autoCompleteCount;
@@ -10,8 +10,20 @@ public class ItemManager : MonoBehaviour {
 
     private NodeController nodeController;
 
+
     void Start() {
         nodeController = FindObjectOfType<NodeController>();
+        // test env
+        //PlayerPrefs.SetInt("Hints", 99);
+        //PlayerPrefs.SetInt("AutoComplete", 99);
+
+        // prod env
+        if (!PlayerPrefs.HasKey("Hints")) PlayerPrefs.SetInt("Hints", 3);
+        if (!PlayerPrefs.HasKey("AutoComplete")) PlayerPrefs.SetInt("AutoComplete", 1);
+        hintCount = PlayerPrefs.GetInt("Hints");
+        autoCompleteCount = PlayerPrefs.GetInt("AutoComplete");
+        nodeController.UpdateCompleteCountUI();
+        nodeController.UpdateHintCountUI();
     }
 
     public bool ConsumeLife() {
@@ -25,6 +37,7 @@ public class ItemManager : MonoBehaviour {
     public bool ConsumeHint() {
         if (hintCount > 0) {
             hintCount--;
+            PlayerPrefs.SetInt("Hints", hintCount);
             return true;
         }
         return false;
@@ -33,6 +46,7 @@ public class ItemManager : MonoBehaviour {
     public bool ConsumeAutoComplete() {
         if (autoCompleteCount > 0) {
             autoCompleteCount--;
+            PlayerPrefs.SetInt("AutoComplete", autoCompleteCount);
             return true;
         }
         return false;
@@ -42,9 +56,11 @@ public class ItemManager : MonoBehaviour {
         switch (itemName) {
             case "Hint":
                 hintCount += count;
+                PlayerPrefs.SetInt("Hints", hintCount);
                 break;
             case "Auto Complete":
                 autoCompleteCount += count;
+                PlayerPrefs.SetInt("AutoComplete", autoCompleteCount);
                 break;
             case "Life":
                 lifeCount += count;
