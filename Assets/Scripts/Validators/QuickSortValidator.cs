@@ -57,6 +57,6 @@ public class QuickSortValidator : MonoBehaviour, ISwapValidator
     }
 
     public (int, int) GetNextSwap(GameObject[] nodes) {
-        return curIdx < swapOrders.Count ? swapOrders[curIdx++] : (-1, -1);
+        return curIdx < swapOrders.Count ? swapOrders[curIdx] : (-1, -1);
     }
 }
