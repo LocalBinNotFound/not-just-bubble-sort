@@ -5,6 +5,7 @@ public class LevelSelectManager : MonoBehaviour
 {
     public GameObject unlockedLevelContainerPrefab;
     public GameObject lockedLevelContainerPrefab;
+    public GameObject orientationReminderDialog;
     public Transform levelGridParent;
     public LevelLoader levelLoader;
     public int levelsPerPage = 9;
@@ -57,5 +58,16 @@ public class LevelSelectManager : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+    }
+    public void OnLevelSelected(int levelIndex)
+    {
+        orientationReminderDialog.SetActive(true); // Show the reminder dialog
+        levelLoader.LoadLevel(levelIndex); // Set to load the level when "Continue" is clicked
+    }
+
+    public void OnContinueClicked()
+    {
+        orientationReminderDialog.SetActive(false); // Hide the dialog
+        // No need to call LoadLevel here because it's already set to begin loading when OnLevelSelected is called
     }
 }
