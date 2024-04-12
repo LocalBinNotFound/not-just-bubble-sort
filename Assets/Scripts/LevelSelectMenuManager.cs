@@ -18,7 +18,7 @@ public class LevelSelectManager : MonoBehaviour
     public void UpdateLevelSelectMenu()
     {
         ClearLevelGrid();
-        int totalLevels = SceneManager.sceneCountInBuildSettings - 2; 
+        int totalLevels = SceneManager.sceneCountInBuildSettings - 3; 
         int startSceneIndex = currentPage * levelsPerPage + 2;
         int endSceneIndex = Mathf.Min(startSceneIndex + levelsPerPage-1, totalLevels+1);
         Debug.Log((startSceneIndex, endSceneIndex));
