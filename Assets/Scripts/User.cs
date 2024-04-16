@@ -9,6 +9,12 @@ public class User
         this.completeDuration = -1;
     }
 
+    public User(string username, int completeDuration)
+    {
+        this.username = username;
+        this.completeDuration = completeDuration;
+    }
+
     public User()
     {}
 }
