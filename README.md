@@ -36,3 +36,36 @@ For easy replacement from previous UI theme: make a copy of **BubbleSort1.unity*
     - You Win - Window - Content - Next Button: adjust to next scene index
 
 - To find scene indices, go to **File - Build Settings**, you will see the index for each scene. For example, **MainMenu** has index 0, **BubbleSort1** has index 2.
+
+## User
+### Register or Login
+```
+FirebaseClient fc = new(null);
+User user = new(<username>);
+fc.RegisterOrLogin(user);
+```
+
+### Update Complete Time (in seconds)
+```
+FirebaseClient fc = new(null);
+user.completeDuration = 60;
+fc.UpdateCompleteDuration(user);
+```
+
+### Get Leaderboard
+```
+class FirebaseListener : IFirebaseListener
+{
+    public void OnLeaderboardRetrieveCompleted(List<User> users)
+    {
+        foreach(User user in users)
+        {
+            Debug.Log(user.username + " " + user.completeDuration);
+        }
+    }
+}
+
+FirebaseListener listener = new();
+FirebaseClient fc = new(listener);
+fc.RetrieveLeaderboard();
+```
