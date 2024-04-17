@@ -18,7 +18,6 @@ public class BubbleSortValidator : MonoBehaviour, ISwapValidator {
 
         int checkStartIndex = lastSwapIndex >= 0 ? lastSwapIndex : 0;
         
-        Debug.Log($"before swap: last swap index: {lastSwapIndex}; boundary: {sortedBoundary}");
         for (int i = checkStartIndex; i < sortedBoundary; i++) {
             int currentValue = int.Parse(nodes[i].GetComponentInChildren<TextMeshPro>().text);
             int nextValue = int.Parse(nodes[i + 1].GetComponentInChildren<TextMeshPro>().text);
@@ -33,7 +32,6 @@ public class BubbleSortValidator : MonoBehaviour, ISwapValidator {
                         sortedBoundary--;
                         lastSwapIndex = -1;
                     }
-                    Debug.Log($"after swap: last swap index: {lastSwapIndex}; boundary: {sortedBoundary}");
                     return true;
                 } else {
                     return false;
