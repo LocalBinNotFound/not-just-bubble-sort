@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -15,10 +16,11 @@ public class UIManager : MonoBehaviour
     private FirebaseClient firebaseClient;
     private bool isUserSignedIn = false;
     private List<LevelRank> ranks;
-    private int totalLevels = 15;
+    private int totalLevels;
 
     void Start()
     {
+        totalLevels = SceneManager.sceneCountInBuildSettings - 3;
         firebaseClient = new FirebaseClient(new FirebaseListener(this));
         firebaseClient.OnTotalStarsRetrieved += UpdateTotalStars;
         firebaseClient.OnUserDataRetrieved += UpdateUserData;
@@ -33,7 +35,7 @@ public class UIManager : MonoBehaviour
             Debug.LogError("Username cannot be empty.");
             return;
         }
-        User user = new User(username);
+        User user = new(username);
         firebaseClient.RegisterOrLogin(user);
         isUserSignedIn = true;
         loginMenu.SetActive(false);

@@ -141,10 +141,6 @@ public class FirebaseClient
                 {
                     Debug.LogError("Failed to save all level data: " + task.Exception);
                 }
-                else if (task.IsCompleted)
-                {
-                    Debug.Log("Successfully saved all level data for user: " + username);
-                }
             });
     }
 
@@ -166,10 +162,6 @@ public class FirebaseClient
                 if (task.IsFaulted)
                 {
                     Debug.LogError("Failed to save user item data: " + task.Exception);
-                }
-                else if (task.IsCompleted)
-                {
-                    Debug.Log("Successfully saved user item data for: " + username);
                 }
             });
     }
