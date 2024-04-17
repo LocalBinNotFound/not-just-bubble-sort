@@ -62,30 +62,33 @@ public class FirebaseClient
         FirebaseDatabase.DefaultInstance.GetReference("users").Child(user.username).Child("completeDuration").SetValueAsync(user.completeDuration);
     }
 
-    public void RetrieveLeaderboard()
+    public void RetrieveLeaderboard(Action<List<LevelRank>> onCompleted)
     {
-        FirebaseDatabase.DefaultInstance
-            .GetReference("users").OrderByChild("completeDuration").StartAt(0)
-            .GetValueAsync().ContinueWithOnMainThread(task => {
-                if (task.IsFaulted) {
-                    Debug.LogError(task.Result);
-                }
-                else if (task.IsCompleted) {
-                    List<User> users = new();
-                    DataSnapshot snapshot = task.Result;
-                    if (snapshot != null && snapshot.Value != null)
+        DatabaseReference levelRef = FirebaseDatabase.DefaultInstance.GetReference("levels");
+
+        levelRef.GetValueAsync().ContinueWithOnMainThread(task => {
+            if (task.IsFaulted)
+            {
+                Debug.LogError("Error retrieving leaderboard data: " + task.Exception);
+            }
+            else if (task.IsCompleted)
+            {
+                List<LevelRank> leaderboardRanks = new List<LevelRank>();
+                DataSnapshot snapshot = task.Result;
+                if (snapshot.Exists)
+                {
+                    foreach (DataSnapshot levelSnapshot in snapshot.Children)
                     {
-                        Debug.Log(((Dictionary<string, object>) snapshot.Value).Count);
-                        foreach (KeyValuePair<string, object> user in (Dictionary<string, object>) snapshot.Value)
-                        {
-                            var u = (Dictionary<string, object>) user.Value;
-                            Debug.Log($"{(string) u["username"]}: {Convert.ToInt32(u["completeDuration"])}");
-                            users.Add(new((string) u["username"], Convert.ToInt32(u["completeDuration"])));
-                        }
+                        string levelName = levelSnapshot.Key;
+                        string username = levelSnapshot.Child("player").Value.ToString();
+                        float time = float.Parse(levelSnapshot.Child("time").Value.ToString());
+                        leaderboardRanks.Add(new LevelRank(levelName, username, time));
+                        Debug.Log($"{levelName}, {username}, {time}");
                     }
-                    listener?.OnLeaderboardRetrieveCompleted(users);
                 }
-            });
+                onCompleted(leaderboardRanks);
+            }
+        });
     }
     
     // get all levels progress from firebase

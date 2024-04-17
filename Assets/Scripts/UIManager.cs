@@ -11,11 +11,10 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI usernameText;
     public TextMeshProUGUI starEarnedText;
     public TextMeshProUGUI walletAmountText;
-    public GameObject leaderboardPanel;
+    public Transform leaderboardContent;
     public GameObject levelRankPrefab; 
     private FirebaseClient firebaseClient;
     private bool isUserSignedIn = false;
-    private List<LevelRank> ranks;
     private int totalLevels;
 
     void Start()
@@ -86,19 +85,21 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void OnLeaderboardButtonClicked()
-    {
-        firebaseClient.RetrieveLeaderboard();
-    }
-
     public void PopulateLeaderboard()
     {
-        foreach (LevelRank rank in ranks)
-        {
-            GameObject rankInstance = Instantiate(levelRankPrefab, leaderboardPanel.transform);
-            LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
-            rankItem.Setup(rank);
-        }
+        firebaseClient.RetrieveLeaderboard(leaderboardRanks => {
+            foreach (Transform child in leaderboardContent.transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            foreach (LevelRank rank in leaderboardRanks)
+            {
+                GameObject rankInstance = Instantiate(levelRankPrefab, leaderboardContent);
+                LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
+                rankItem.Setup(rank);
+            }
+        });
     }
 
     private void UpdateUserData(int[] userData)
@@ -123,6 +124,5 @@ public class FirebaseListener : IFirebaseListener
 
     public void OnLeaderboardRetrieveCompleted(List<User> users)
     {
-         uiManager.PopulateLeaderboard();
     }
 }
