@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     private FirebaseClient firebaseClient;
     private bool isUserSignedIn = false;
     private List<LevelRank> ranks;
+    private int totalLevels = 15;
 
     void Start()
     {
@@ -40,10 +41,28 @@ public class UIManager : MonoBehaviour
 
     public void OnSignOutButtonClicked()
     {
+        string username = PlayerPrefs.GetString("Username", "");
+        if (!string.IsNullOrEmpty(username))
+        {
+            firebaseClient.SaveAllLevelsData(username);
+        }
+
+        ResetAllLevelData();
+
         isUserSignedIn = false;
         loginMenu.SetActive(true);
         userMenu.SetActive(false);
         PlayerPrefs.SetInt("IsUserSignedIn", 0);
+        PlayerPrefs.DeleteKey("Username");
+    }
+
+    private void ResetAllLevelData()
+    {
+        for (int i = 1; i <= totalLevels; i++)
+        {
+            PlayerPrefs.SetInt($"Level_{i}", 0);
+        }
+        PlayerPrefs.Save();
     }
 
     private void CheckUserSignInState()
