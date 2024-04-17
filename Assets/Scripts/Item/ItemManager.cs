@@ -13,13 +13,7 @@ public class ItemManager : MonoBehaviour {
 
     void Start() {
         nodeController = FindObjectOfType<NodeController>();
-        // test env
-        //PlayerPrefs.SetInt("Hints", 99);
-        //PlayerPrefs.SetInt("AutoComplete", 99);
 
-        // prod env
-        if (!PlayerPrefs.HasKey("Hints")) PlayerPrefs.SetInt("Hints", 3);
-        if (!PlayerPrefs.HasKey("AutoComplete")) PlayerPrefs.SetInt("AutoComplete", 1);
         hintCount = PlayerPrefs.GetInt("Hints");
         autoCompleteCount = PlayerPrefs.GetInt("AutoComplete");
         nodeController.UpdateCompleteCountUI();

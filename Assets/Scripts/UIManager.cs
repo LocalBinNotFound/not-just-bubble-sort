@@ -8,6 +8,8 @@ public class UIManager : MonoBehaviour
     public GameObject userMenu;
     public TMP_InputField usernameInput;
     public TextMeshProUGUI usernameText;
+    public TextMeshProUGUI starEarnedText;
+    public TextMeshProUGUI walletAmountText;
     public GameObject leaderboardPanel;
     public GameObject levelRankPrefab; 
     private FirebaseClient firebaseClient;
@@ -18,6 +20,8 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         firebaseClient = new FirebaseClient(new FirebaseListener(this));
+        firebaseClient.OnTotalStarsRetrieved += UpdateTotalStars;
+        firebaseClient.OnUserDataRetrieved += UpdateUserData;
         CheckUserSignInState();
     }
 
@@ -44,25 +48,27 @@ public class UIManager : MonoBehaviour
         string username = PlayerPrefs.GetString("Username", "");
         if (!string.IsNullOrEmpty(username))
         {
+            int hints = PlayerPrefs.GetInt("Hints", 0);
+            int autoCompletes = PlayerPrefs.GetInt("AutoComplete", 0);
+            int coins = PlayerPrefs.GetInt("WalletAmount", 0);
+            firebaseClient.SaveUserData(username, hints, autoCompletes, coins);
             firebaseClient.SaveAllLevelsData(username);
         }
 
-        ResetAllLevelData();
+        for (int i = 1; i <= totalLevels; i++)
+        {
+            PlayerPrefs.SetInt($"Level_{i}", 0);
+        }
+        PlayerPrefs.SetInt("Hints", 3);
+        PlayerPrefs.SetInt("AutoComplete", 1);
+        PlayerPrefs.SetInt("WalletAmount", 100);
+        PlayerPrefs.Save();
 
         isUserSignedIn = false;
         loginMenu.SetActive(true);
         userMenu.SetActive(false);
         PlayerPrefs.SetInt("IsUserSignedIn", 0);
         PlayerPrefs.DeleteKey("Username");
-    }
-
-    private void ResetAllLevelData()
-    {
-        for (int i = 1; i <= totalLevels; i++)
-        {
-            PlayerPrefs.SetInt($"Level_{i}", 0);
-        }
-        PlayerPrefs.Save();
     }
 
     private void CheckUserSignInState()
@@ -91,6 +97,16 @@ public class UIManager : MonoBehaviour
             LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
             rankItem.Setup(rank);
         }
+    }
+
+    private void UpdateUserData(int[] userData)
+    {
+        walletAmountText.text = $"{userData[2]}";
+    }
+
+    public void UpdateTotalStars(int totalStars)
+    {
+        starEarnedText.text = $"{totalStars}";
     }
 }
 

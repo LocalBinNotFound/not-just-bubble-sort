@@ -4,11 +4,14 @@ using Firebase;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FirebaseClient
 {
     private IFirebaseListener listener;
-    private int totalLevels = 15;
+    private int totalLevels = SceneManager.sceneCountInBuildSettings - 3;
+    public Action<int> OnTotalStarsRetrieved;
+    public Action<int[]> OnUserDataRetrieved;
     public FirebaseClient(IFirebaseListener listener)
     {
         this.listener = listener;
@@ -27,7 +30,20 @@ public class FirebaseClient
                 userRef.Child("levelMenu").GetValueAsync().ContinueWithOnMainThread(levelTask => {
                     if (!levelTask.Result.Exists)
                     {
-                        Debug.Log("Initializing levels for this user...");
+                        DatabaseReference levelsRef = FirebaseDatabase.DefaultInstance.GetReference($"users/{user.username}/levelMenu");
+                        for (int i = 1; i <= totalLevels; i++)
+                        {
+                            levelsRef.Child($"Level_{i}").Child("starsEarned").SetValueAsync(0);
+                        }
+                    }
+                });
+                userRef.Child("items").GetValueAsync().ContinueWithOnMainThread(itemsTask => {
+                    if (!itemsTask.Result.Exists)
+                    {
+                        userRef.Child("items").Child("hints").SetValueAsync(3);
+                        userRef.Child("items").Child("autoCompletes").SetValueAsync(1);
+                        userRef.Child("items").Child("coins").SetValueAsync(100);
+
                         DatabaseReference levelsRef = FirebaseDatabase.DefaultInstance.GetReference($"users/{user.username}/levelMenu");
                         for (int i = 1; i <= totalLevels; i++)
                         {
@@ -38,6 +54,7 @@ public class FirebaseClient
             }
         });
         RetrieveLevelsData(user.username);
+        RetrieveUserData(user.username);
     }
 
     public void UpdateCompleteDuration(User user)
@@ -70,11 +87,13 @@ public class FirebaseClient
                 }
             });
     }
-
+    
+    // get all levels progress from firebase
     public void RetrieveLevelsData(string username)
     {
         string path = $"users/{username}/levelMenu";
         DatabaseReference levelsRef = FirebaseDatabase.DefaultInstance.GetReference(path);
+        int totalStars = 0;
 
         levelsRef.GetValueAsync().ContinueWithOnMainThread(task => {
             if (task.IsFaulted)
@@ -91,12 +110,15 @@ public class FirebaseClient
                         int levelIndex = int.Parse(levelSnapshot.Key.Replace("Level_", ""));
                         int starsEarned = int.Parse(levelSnapshot.Child("starsEarned").Value.ToString());
                         PlayerPrefs.SetInt($"Level_{levelIndex}", starsEarned);
+                        totalStars += starsEarned;
                     }
+                    OnTotalStarsRetrieved?.Invoke(totalStars);
+
                 }
             }
         });
     }
-
+    // upload level progress to firebase
     public void SaveAllLevelsData(string username)
     {
         Dictionary<string, object> levelsDataToUpdate = new Dictionary<string, object>();
@@ -126,5 +148,57 @@ public class FirebaseClient
             });
     }
 
+    // save user items to firebase
+    public void SaveUserData(string username, int hints, int autoCompletes, int coins)
+    {
+        string path = $"users/{username}/items";
+        Dictionary<string, object> itemsData = new Dictionary<string, object>
+        {
+            { "hints", hints },
+            { "autoCompletes", autoCompletes },
+            { "coins", coins }
+        };
 
+        DatabaseReference itemsRef = FirebaseDatabase.DefaultInstance.GetReference(path);
+        itemsRef.UpdateChildrenAsync(itemsData)
+            .ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    Debug.LogError("Failed to save user item data: " + task.Exception);
+                }
+                else if (task.IsCompleted)
+                {
+                    Debug.Log("Successfully saved user item data for: " + username);
+                }
+            });
+    }
+
+    // get user items from database
+    public void RetrieveUserData(string username)
+    {
+        string path = $"users/{username}/items";
+        DatabaseReference itemsRef = FirebaseDatabase.DefaultInstance.GetReference(path);
+
+        itemsRef.GetValueAsync().ContinueWithOnMainThread(task => {
+            if (task.IsFaulted)
+            {
+                Debug.LogError("Error retrieving user item data: " + task.Exception);
+            }
+            else if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                if (snapshot.Exists)
+                {
+                    int hints = int.Parse(snapshot.Child("hints").Value.ToString());
+                    int autoCompletes = int.Parse(snapshot.Child("autoCompletes").Value.ToString());
+                    int coins = int.Parse(snapshot.Child("coins").Value.ToString());
+                    PlayerPrefs.SetInt("Hints", hints);
+                    PlayerPrefs.SetInt("AutoComplete", autoCompletes);
+                    PlayerPrefs.SetInt("WalletAmount", coins);
+                    OnUserDataRetrieved?.Invoke(new int[] {hints, autoCompletes, coins});
+                }
+            }
+        });
+    }
 }
