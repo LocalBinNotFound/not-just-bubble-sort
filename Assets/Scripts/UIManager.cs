@@ -8,8 +8,11 @@ public class UIManager : MonoBehaviour
     public GameObject userMenu;
     public TMP_InputField usernameInput;
     public TextMeshProUGUI usernameText;
+    public GameObject leaderboardPanel;
+    public GameObject levelRankPrefab; 
     private FirebaseClient firebaseClient;
     private bool isUserSignedIn = false;
+    private List<LevelRank> ranks;
 
     void Start()
     {
@@ -50,10 +53,24 @@ public class UIManager : MonoBehaviour
         loginMenu.SetActive(!isUserSignedIn);
         userMenu.SetActive(isUserSignedIn);
 
-        // If the user is signed in, also update the usernameText with the stored username.
         if (isUserSignedIn)
         {
             usernameText.text = PlayerPrefs.GetString("Username", "");
+        }
+    }
+
+    public void OnLeaderboardButtonClicked()
+    {
+        firebaseClient.RetrieveLeaderboard();
+    }
+
+    public void PopulateLeaderboard()
+    {
+        foreach (LevelRank rank in ranks)
+        {
+            GameObject rankInstance = Instantiate(levelRankPrefab, leaderboardPanel.transform);
+            LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
+            rankItem.Setup(rank);
         }
     }
 }
@@ -69,6 +86,6 @@ public class FirebaseListener : IFirebaseListener
 
     public void OnLeaderboardRetrieveCompleted(List<User> users)
     {
-        throw new System.NotImplementedException();
+         uiManager.PopulateLeaderboard();
     }
 }

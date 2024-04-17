@@ -40,13 +40,10 @@ public class FirebaseClient
                         foreach (KeyValuePair<string, object> user in (Dictionary<string, object>) snapshot.Value)
                         {
                             var u = (Dictionary<string, object>) user.Value;
-                            Debug.Log((string) u["username"]);
-                            Debug.Log(Convert.ToInt32(u["completeDuration"]));
+                            Debug.Log($"{(string) u["username"]}: {Convert.ToInt32(u["completeDuration"])}");
                             users.Add(new((string) u["username"], Convert.ToInt32(u["completeDuration"])));
                         }
-                        Debug.Log("123");
                     }
-                    Debug.Log("456");
                     listener?.OnLeaderboardRetrieveCompleted(users);
                 }
             });
