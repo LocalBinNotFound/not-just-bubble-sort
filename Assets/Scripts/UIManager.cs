@@ -117,6 +117,12 @@ public class UIManager : MonoBehaviour
     {
         orientationReminderDialog.SetActive(false); 
     }
+
+    void OnApplicationQuit()
+    {
+        PlayerPrefs.SetInt("IsUserSignedIn", 0);
+        PlayerPrefs.Save();
+    }
 }
 
 public class FirebaseListener : IFirebaseListener
