@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI walletAmountText;
     public Transform leaderboardContent;
     public GameObject levelRankPrefab; 
+    public GameObject orientationReminderDialog;
     private FirebaseClient firebaseClient;
     private bool isUserSignedIn = false;
     private int totalLevels;
@@ -110,6 +111,11 @@ public class UIManager : MonoBehaviour
     public void UpdateTotalStars(int totalStars)
     {
         starEarnedText.text = $"{totalStars}";
+    }
+
+    public void OnContinueClicked()
+    {
+        orientationReminderDialog.SetActive(false); 
     }
 }
 
