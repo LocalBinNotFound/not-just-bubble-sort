@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
+using System.Threading.Tasks;
 using Firebase;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 
 public class FirebaseClient
 {
@@ -12,9 +15,15 @@ public class FirebaseClient
     private int totalLevels = SceneManager.sceneCountInBuildSettings - 3;
     public Action<int> OnTotalStarsRetrieved;
     public Action<int[]> OnUserDataRetrieved;
+
     public FirebaseClient(IFirebaseListener listener)
     {
         this.listener = listener;
+    }
+
+    public FirebaseClient()
+    {
+        //blank on purpose
     }
 
     public void RegisterOrLogin(User user)
@@ -195,5 +204,36 @@ public class FirebaseClient
                 }
             }
         });
+    }
+
+    //save the data of user with best score to database
+    public IEnumerator UploadUserScore(string levelName, string playerName, int timeSpent)
+    {
+        DatabaseReference rootRef = FirebaseDatabase.DefaultInstance.RootReference;
+        Task<DataSnapshot> DBTask = rootRef.Child("levels").Child(levelName).GetValueAsync();
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else if (DBTask.Result.Value == null)
+        {
+            //No data exists yet
+            rootRef.Child("levels").Child(levelName).Child("player").SetValueAsync(playerName);
+            rootRef.Child("levels").Child(levelName).Child("time").SetValueAsync(timeSpent);
+        }
+        else
+        {
+            DataSnapshot snapshot = DBTask.Result;
+
+            if (int.Parse(snapshot.Child("time").Value.ToString().Trim()) > timeSpent)
+            {
+                rootRef.Child("levels").Child(levelName).Child("time").SetValueAsync(timeSpent);
+                rootRef.Child("levels").Child(levelName).Child("player").SetValueAsync(playerName);
+            }
+
+        }
     }
 }

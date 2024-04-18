@@ -35,12 +35,28 @@ public class NodeController : MonoBehaviour
     private Vector3[] snapPositions;
     private bool isSwapping = false;
 
+    private FirebaseClient firebaseClient;
+    private string playerName;
+    private float timeCounter;  //in seconds
+    public string levelName;
+
     void Start() {
         audioSource = GetComponentInChildren<AudioSource>();
         itemManager = FindObjectOfType<ItemManager>();
         swapValidator = GetComponent<ISwapValidator>();
         gameOver = FindObjectOfType<GameOver>();
         youWin = FindObjectOfType<YouWin>();
+
+        firebaseClient = new FirebaseClient();
+
+        if (PlayerPrefs.HasKey("Username"))
+        {
+            playerName = PlayerPrefs.GetString("Username");
+        }
+        else
+        {
+            playerName = "Unknown";
+        }
 
         InitializeGame();
 
@@ -60,6 +76,7 @@ public class NodeController : MonoBehaviour
         swapValidator ??= FindObjectOfType(typeof(ISwapValidator)) as ISwapValidator;
 
         isGamePaused = false;
+        timeCounter = 0;
 
         Wallet.SetAmount(PlayerPrefs.GetInt("WalletAmount"));
 
@@ -97,6 +114,8 @@ public class NodeController : MonoBehaviour
 
     void Update()
     {
+        timeCounter += Time.deltaTime;
+
         if (isSwapping) return;
         if (Input.GetMouseButtonDown(0))
         {
@@ -244,6 +263,8 @@ public class NodeController : MonoBehaviour
         }
 
         if (IsArraySorted()) {
+            StartCoroutine(firebaseClient.UploadUserScore(levelName, playerName, Mathf.RoundToInt(timeCounter)));
+
             youWin.CompleteGame();
             yield break;
         }
