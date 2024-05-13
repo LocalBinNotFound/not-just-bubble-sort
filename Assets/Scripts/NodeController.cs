@@ -35,7 +35,7 @@ public class NodeController : MonoBehaviour
     private Vector3[] snapPositions;
     private bool isSwapping = false;
 
-    private FirebaseClient firebaseClient;
+    //private FirebaseClient firebaseClient;
     private string playerName;
     private float timeCounter;  //in seconds
     public string levelName;
@@ -47,7 +47,7 @@ public class NodeController : MonoBehaviour
         gameOver = FindObjectOfType<GameOver>();
         youWin = FindObjectOfType<YouWin>();
 
-        firebaseClient = new FirebaseClient();
+        //firebaseClient = new FirebaseClient();
 
         if (PlayerPrefs.HasKey("Username"))
         {
@@ -87,8 +87,8 @@ public class NodeController : MonoBehaviour
         float screenWidth = Camera.main.orthographicSize * 2.0f * Screen.width / Screen.height;
         float spacing = screenWidth / (allNodes.Length + 1);
 
-        Vector3 center = new Vector3(-893, 500, 0);
-        Vector3 scale = new Vector3(15,16,1);
+        Vector3 center = new Vector3(-2911, -600, 0);
+        Vector3 scale = new Vector3(30,32,1);
 
         for (int i = 0; i < allNodes.Length; i++) {
             Vector3 snapPosition = new Vector3((i + 1) * spacing - (screenWidth / 2) + center.x, center.y, center.z);
@@ -263,7 +263,7 @@ public class NodeController : MonoBehaviour
         }
 
         if (IsArraySorted()) {
-            StartCoroutine(firebaseClient.UploadUserScore(levelName, playerName, Mathf.RoundToInt(timeCounter)));
+            //StartCoroutine(firebaseClient.UploadUserScore(levelName, playerName, Mathf.RoundToInt(timeCounter)));
 
             youWin.CompleteGame();
             yield break;

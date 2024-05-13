@@ -14,16 +14,16 @@ public class UIManager : MonoBehaviour
     public Transform leaderboardContent;
     public GameObject levelRankPrefab; 
     public GameObject orientationReminderDialog;
-    private FirebaseClient firebaseClient;
+    //private FirebaseClient firebaseClient;
     private bool isUserSignedIn = false;
     private int totalLevels;
 
     void Start()
     {
         totalLevels = SceneManager.sceneCountInBuildSettings - 3;
-        firebaseClient = new FirebaseClient(new FirebaseListener(this));
-        firebaseClient.OnTotalStarsRetrieved += UpdateTotalStars;
-        firebaseClient.OnUserDataRetrieved += UpdateUserData;
+        // firebaseClient = new FirebaseClient(new FirebaseListener(this));
+        // firebaseClient.OnTotalStarsRetrieved += UpdateTotalStars;
+        // firebaseClient.OnUserDataRetrieved += UpdateUserData;
         CheckUserSignInState();
     }
 
@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
             return;
         }
         User user = new(username);
-        firebaseClient.RegisterOrLogin(user);
+        //firebaseClient.RegisterOrLogin(user);
         isUserSignedIn = true;
         loginMenu.SetActive(false);
         userMenu.SetActive(true);
@@ -53,8 +53,8 @@ public class UIManager : MonoBehaviour
             int hints = PlayerPrefs.GetInt("Hints", 0);
             int autoCompletes = PlayerPrefs.GetInt("AutoComplete", 0);
             int coins = PlayerPrefs.GetInt("WalletAmount", 0);
-            firebaseClient.SaveUserData(username, hints, autoCompletes, coins);
-            firebaseClient.SaveAllLevelsData(username);
+            //firebaseClient.SaveUserData(username, hints, autoCompletes, coins);
+            //firebaseClient.SaveAllLevelsData(username);
         }
 
         for (int i = 1; i <= totalLevels; i++)
@@ -88,19 +88,19 @@ public class UIManager : MonoBehaviour
 
     public void PopulateLeaderboard()
     {
-        firebaseClient.RetrieveLeaderboard(leaderboardRanks => {
-            foreach (Transform child in leaderboardContent.transform)
-            {
-                Destroy(child.gameObject);
-            }
+        // firebaseClient.RetrieveLeaderboard(leaderboardRanks => {
+        //     foreach (Transform child in leaderboardContent.transform)
+        //     {
+        //         Destroy(child.gameObject);
+        //     }
 
-            foreach (LevelRank rank in leaderboardRanks)
-            {
-                GameObject rankInstance = Instantiate(levelRankPrefab, leaderboardContent);
-                LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
-                rankItem.Setup(rank);
-            }
-        });
+        //     foreach (LevelRank rank in leaderboardRanks)
+        //     {
+        //         GameObject rankInstance = Instantiate(levelRankPrefab, leaderboardContent);
+        //         LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
+        //         rankItem.Setup(rank);
+        //     }
+        // });
     }
 
     private void UpdateUserData(int[] userData)
@@ -125,16 +125,16 @@ public class UIManager : MonoBehaviour
     }
 }
 
-public class FirebaseListener : IFirebaseListener
-{
-    private UIManager uiManager;
+// public class FirebaseListener : IFirebaseListener
+// {
+//     private UIManager uiManager;
 
-    public FirebaseListener(UIManager uiManager)
-    {
-        this.uiManager = uiManager;
-    }
+//     public FirebaseListener(UIManager uiManager)
+//     {
+//         this.uiManager = uiManager;
+//     }
 
-    public void OnLeaderboardRetrieveCompleted(List<User> users)
-    {
-    }
-}
+//     public void OnLeaderboardRetrieveCompleted(List<User> users)
+//     {
+//     }
+// }
