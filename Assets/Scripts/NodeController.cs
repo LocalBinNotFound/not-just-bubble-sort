@@ -67,7 +67,7 @@ public class NodeController : MonoBehaviour
         livesText.text = $"{itemManager.LifeCount}";
 
         hintsText.text = $"{PlayerPrefs.GetInt("Hints")}";
-        autoCompleteText.text=$"{PlayerPrefs.GetInt("AutoComplete")}";
+        autoCompleteText.text=$"{PlayerPrefs.GetInt("AutoCompletes")}";
         coinsText.text=$"{Wallet.GetAmount()}";
     }
 

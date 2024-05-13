@@ -15,7 +15,8 @@ public class ItemManager : MonoBehaviour {
         nodeController = FindObjectOfType<NodeController>();
 
         hintCount = PlayerPrefs.GetInt("Hints");
-        autoCompleteCount = PlayerPrefs.GetInt("AutoComplete");
+        autoCompleteCount = PlayerPrefs.GetInt("AutoCompletes");
+        Debug.Log("In item manager, auto complete  count is: " + autoCompleteCount);
         nodeController.UpdateCompleteCountUI();
         nodeController.UpdateHintCountUI();
     }
@@ -40,7 +41,7 @@ public class ItemManager : MonoBehaviour {
     public bool ConsumeAutoComplete() {
         if (autoCompleteCount > 0) {
             autoCompleteCount--;
-            PlayerPrefs.SetInt("AutoComplete", autoCompleteCount);
+            PlayerPrefs.SetInt("AutoCompletes", autoCompleteCount);
             return true;
         }
         return false;
@@ -54,7 +55,7 @@ public class ItemManager : MonoBehaviour {
                 break;
             case "Auto Complete":
                 autoCompleteCount += count;
-                PlayerPrefs.SetInt("AutoComplete", autoCompleteCount);
+                PlayerPrefs.SetInt("AutoCompletes", autoCompleteCount);
                 break;
             case "Life":
                 lifeCount += count;

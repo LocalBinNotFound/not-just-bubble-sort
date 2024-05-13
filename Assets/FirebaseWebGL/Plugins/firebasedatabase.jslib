@@ -94,7 +94,10 @@ mergeInto(LibraryManager.library, {
             } else {
                 var newUser = {
                     username: parsedUsername,
-                    items: { hints: 3, autoCompletes: 1, coins: 100 },
+                    items: { 
+                        hints: 3, 
+                        autoCompletes: 1, 
+                        coins: 100 },
                     levelMenu: {}
                 };
                 for (var i = 1; i <= totalLevels; i++) {

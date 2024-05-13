@@ -1,44 +1,47 @@
 using UnityEngine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+
 
 public class UserDataObject : MonoBehaviour
 {
+    public static UserDataObject Instance;
+    public event Action OnUserDataUpdated;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public void UpdateUserData(string jsondata)
     {
-        Debug.Log("Received user data: " + jsondata);
-        UserData userData = JsonUtility.FromJson<UserData>(jsondata);
+        int totalStarsEarned = 0;
+        UserData userData = JsonConvert.DeserializeObject<UserData>(jsondata);
         PlayerPrefs.SetInt("Hints", userData.items.hints);
         PlayerPrefs.SetInt("AutoCompletes", userData.items.autoCompletes);
-        PlayerPrefs.SetInt("Coins", userData.items.coins);
-        Debug.Log("Hints: " + PlayerPrefs.GetInt("Hints"));
-        Debug.Log("AutoCompletes: " + PlayerPrefs.GetInt("AutoCompletes"));
-        Debug.Log("Coins: " + PlayerPrefs.GetInt("Coins"));
+        PlayerPrefs.SetInt("WalletAmount", userData.items.coins);
 
         foreach (var level in userData.levelMenu)
         {
-            string key = level.Key.ToString();
-            int val = int.Parse(level.Value.ToString());
-            PlayerPrefs.SetInt(key, val);
+            string key = $"{level.Key}";
+            int stars = level.Value.starsEarned;
+            totalStarsEarned += stars;
+            PlayerPrefs.SetInt(key, stars);
         }
+        PlayerPrefs.SetInt("TotalStarsEarned", totalStarsEarned);
         PlayerPrefs.Save();
 
-
+        OnUserDataUpdated?.Invoke();
     }
 }
-
-[System.Serializable]
-public class UserData
-{
-    public string username;
-    public UserItems items;
-    public Dictionary<string, int> levelMenu;
-}
-
-[System.Serializable]
-public class UserItems
-{
-    public int hints;
-    public int autoCompletes;
-    public int coins;
-}
-

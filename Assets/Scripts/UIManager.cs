@@ -20,8 +20,7 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         totalLevels = SceneManager.sceneCountInBuildSettings - 3;
-        //firebaseClient.OnTotalStarsRetrieved += UpdateTotalStars;
-        //firebaseClient.OnDataRetrieved += UpdateUserData;
+        UserDataObject.Instance.OnUserDataUpdated += OnUserDataUpdated;
         CheckUserSignInState();
     }
 
@@ -48,11 +47,7 @@ public class UIManager : MonoBehaviour
         string username = PlayerPrefs.GetString("Username", "");
         if (!string.IsNullOrEmpty(username))
         {
-            int hints = PlayerPrefs.GetInt("Hints", 0);
-            int autoCompletes = PlayerPrefs.GetInt("AutoComplete", 0);
-            int coins = PlayerPrefs.GetInt("WalletAmount", 0);
-            //firebaseClient.SaveUserData(username, hints, autoCompletes, coins);
-            //firebaseClient.SaveAllLevelsData(username);
+            FirebaseDataManager.Instance.SignOutAndSaveData(username);
         }
 
         for (int i = 1; i <= totalLevels; i++)
@@ -60,7 +55,7 @@ public class UIManager : MonoBehaviour
             PlayerPrefs.SetInt($"Level_{i}", 0);
         }
         PlayerPrefs.SetInt("Hints", 3);
-        PlayerPrefs.SetInt("AutoComplete", 1);
+        PlayerPrefs.SetInt("AutoCompletes", 1);
         PlayerPrefs.SetInt("WalletAmount", 100);
         PlayerPrefs.Save();
 
@@ -81,7 +76,15 @@ public class UIManager : MonoBehaviour
         if (isUserSignedIn)
         {
             usernameText.text = PlayerPrefs.GetString("Username", "");
+            walletAmountText.text = $"{PlayerPrefs.GetInt("WalletAmount")}";
+            starEarnedText.text = $"{PlayerPrefs.GetInt("TotalStarsEarned")}";
         }
+    }
+
+    private void OnUserDataUpdated()
+    {
+        walletAmountText.text = $"{PlayerPrefs.GetInt("WalletAmount")}";
+        starEarnedText.text = $"{PlayerPrefs.GetInt("TotalStarsEarned")}";
     }
 
     public void PopulateLeaderboard()
@@ -99,16 +102,6 @@ public class UIManager : MonoBehaviour
         //         rankItem.Setup(rank);
         //     }
         // });
-    }
-
-    private void UpdateUserData(int[] userData)
-    {
-        walletAmountText.text = $"{userData[2]}";
-    }
-
-    public void UpdateTotalStars(int totalStars)
-    {
-        starEarnedText.text = $"{totalStars}";
     }
 
     public void OnContinueClicked()
