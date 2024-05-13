@@ -14,16 +14,14 @@ public class UIManager : MonoBehaviour
     public Transform leaderboardContent;
     public GameObject levelRankPrefab; 
     public GameObject orientationReminderDialog;
-    //private FirebaseClient firebaseClient;
     private bool isUserSignedIn = false;
     private int totalLevels;
 
     void Start()
     {
         totalLevels = SceneManager.sceneCountInBuildSettings - 3;
-        // firebaseClient = new FirebaseClient(new FirebaseListener(this));
-        // firebaseClient.OnTotalStarsRetrieved += UpdateTotalStars;
-        // firebaseClient.OnUserDataRetrieved += UpdateUserData;
+        //firebaseClient.OnTotalStarsRetrieved += UpdateTotalStars;
+        //firebaseClient.OnDataRetrieved += UpdateUserData;
         CheckUserSignInState();
     }
 
@@ -35,8 +33,8 @@ public class UIManager : MonoBehaviour
             Debug.LogError("Username cannot be empty.");
             return;
         }
-        User user = new(username);
-        //firebaseClient.RegisterOrLogin(user);
+        FirebaseDataManager.Instance.RegisterOrLogin(username);
+        
         isUserSignedIn = true;
         loginMenu.SetActive(false);
         userMenu.SetActive(true);
@@ -124,17 +122,3 @@ public class UIManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 }
-
-// public class FirebaseListener : IFirebaseListener
-// {
-//     private UIManager uiManager;
-
-//     public FirebaseListener(UIManager uiManager)
-//     {
-//         this.uiManager = uiManager;
-//     }
-
-//     public void OnLeaderboardRetrieveCompleted(List<User> users)
-//     {
-//     }
-// }

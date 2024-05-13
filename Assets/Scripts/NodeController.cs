@@ -36,7 +36,6 @@ public class NodeController : MonoBehaviour
     private Vector3[] snapPositions;
     private bool isSwapping = false;
 
-    //private FirebaseClient firebaseClient;
     private string playerName;
     private float timeCounter;  //in seconds
     public string levelName;
@@ -48,7 +47,6 @@ public class NodeController : MonoBehaviour
         gameOver = FindObjectOfType<GameOver>();
         youWin = FindObjectOfType<YouWin>();
 
-        //firebaseClient = new FirebaseClient();
 
         if (PlayerPrefs.HasKey("Username"))
         {
@@ -270,7 +268,7 @@ public class NodeController : MonoBehaviour
         }
 
         if (IsArraySorted()) {
-            //StartCoroutine(firebaseClient.UploadUserScore(levelName, playerName, Mathf.RoundToInt(timeCounter)));
+            //firebaseClient.UploadUserScore(levelName, playerName, Mathf.RoundToInt(timeCounter));
 
             youWin.CompleteGame();
             yield break;
