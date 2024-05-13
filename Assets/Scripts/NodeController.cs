@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class NodeController : MonoBehaviour
 {
@@ -90,6 +91,7 @@ public class NodeController : MonoBehaviour
         Vector3 center = new Vector3(-2911, -600, 0);
         Vector3 scale = new Vector3(30,32,1);
 
+        HashSet<int> generatedNumbers = new HashSet<int>();
         for (int i = 0; i < allNodes.Length; i++) {
             Vector3 snapPosition = new Vector3((i + 1) * spacing - (screenWidth / 2) + center.x, center.y, center.z);
             snapPositions[i] = snapPosition;
@@ -101,7 +103,12 @@ public class NodeController : MonoBehaviour
 
             StartCoroutine(ScaleNodeToSize(node.transform, scale, 0.5f));
 
-            int randomNumber = Random.Range(1, 100);
+            int randomNumber;
+            do {
+                randomNumber = Random.Range(1, 100);
+            } while (generatedNumbers.Contains(randomNumber));
+            generatedNumbers.Add(randomNumber);
+
             TextMeshPro textComponent = node.GetComponentInChildren<TextMeshPro>();
             if (textComponent != null) {
                 textComponent.text = randomNumber.ToString();
