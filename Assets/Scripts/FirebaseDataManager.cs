@@ -53,7 +53,6 @@ public class FirebaseDataManager : MonoBehaviour
             userData.levelMenu[key] = new LevelInfo { starsEarned = stars };
         }
         string jsondata = JsonConvert.SerializeObject(userData);
-        Debug.Log("user data upload: " + jsondata);
         FirebaseDatabase.UpdateJSON($"users/{username}", jsondata, "OnDataSaved", "OnDataSaveFailed");
     }
 
