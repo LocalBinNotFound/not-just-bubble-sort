@@ -112,4 +112,45 @@ mergeInto(LibraryManager.library, {
         });
     },
 
+    UploadLevelScore: function(levelName, playerName, timeSpent) {
+        var levelPath = 'levels/' + UTF8ToString(levelName);
+        var player = UTF8ToString(playerName);
+        var time = parseFloat(UTF8ToString(timeSpent));
+
+        window.database.ref(levelPath).transaction(function(currentData) {
+            if (currentData === null || currentData.time > time) {
+                return { player: player, time: time };
+            } else {
+                return;
+            }
+        }, function(error, committed, snapshot) {
+            if (error) {
+                console.error("Transaction failed: ", error);
+            } else if (!committed) {
+                console.log("Transaction aborted (time was not smaller)");
+            } else {
+                console.log("Time updated to: ", snapshot.val());
+            }
+        });
+    },
+
+    RetrieveLeaderboard: function() {
+        var levelsRef = window.database.ref('levels');
+        levelsRef.once('value').then(function(snapshot) {
+            var leaderboardData = [];
+            snapshot.forEach(function(childSnapshot) {
+                var levelName = childSnapshot.key;
+                var levelData = childSnapshot.val();
+                leaderboardData.push({
+                    levelName: levelName,
+                    username: levelData.player,
+                    time: levelData.time
+                });
+            });
+            unityInstance.Module.SendMessage("User", "UpdateLeaderboardUI", JSON.stringify(leaderboardData));
+        }).catch(function(error) {
+            console.error('Error retrieving leaderboard data:', error);
+        });
+    }
+
 });

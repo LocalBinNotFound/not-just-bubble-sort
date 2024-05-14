@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace FirebaseWebGL.Scripts.FirebaseBridge
 {
@@ -62,6 +63,11 @@ namespace FirebaseWebGL.Scripts.FirebaseBridge
         [DllImport("__Internal")]
         public static extern void RegisterOrLogin(string username, int totalLevels);
 
+        [DllImport("__Internal")]
+        public static extern void UploadLevelScore(string levelName, string playerName, string timeSpent);
+
+        [DllImport("__Internal")]
+        public static extern void RetrieveLeaderboard();
 
     }
 }

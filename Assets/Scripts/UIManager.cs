@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
 
 public class UIManager : MonoBehaviour
 {
@@ -13,7 +14,6 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI walletAmountText;
     public Transform leaderboardContent;
     public GameObject levelRankPrefab; 
-    public GameObject orientationReminderDialog;
     private bool isUserSignedIn = false;
     private int totalLevels;
 
@@ -89,24 +89,23 @@ public class UIManager : MonoBehaviour
 
     public void PopulateLeaderboard()
     {
-        // firebaseClient.RetrieveLeaderboard(leaderboardRanks => {
-        //     foreach (Transform child in leaderboardContent.transform)
-        //     {
-        //         Destroy(child.gameObject);
-        //     }
-
-        //     foreach (LevelRank rank in leaderboardRanks)
-        //     {
-        //         GameObject rankInstance = Instantiate(levelRankPrefab, leaderboardContent);
-        //         LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
-        //         rankItem.Setup(rank);
-        //     }
-        // });
+        FirebaseDataManager.Instance.RetrieveLeaderboard();
     }
 
-    public void OnContinueClicked()
+    public void UpdateLeaderboardUI(string jsonData)
     {
-        orientationReminderDialog.SetActive(false); 
+        List<LevelRank> leaderboardRanks = JsonConvert.DeserializeObject<List<LevelRank>>(jsonData);
+        foreach (Transform child in leaderboardContent.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (LevelRank rank in leaderboardRanks)
+        {
+            GameObject rankInstance = Instantiate(levelRankPrefab, leaderboardContent);
+            LevelRankItem rankItem = rankInstance.GetComponent<LevelRankItem>();
+            rankItem.Setup(rank);
+        }
     }
 
     void OnApplicationQuit()

@@ -37,35 +37,55 @@ For easy replacement from previous UI theme: make a copy of **BubbleSort1.unity*
 
 - To find scene indices, go to **File - Build Settings**, you will see the index for each scene. For example, **MainMenu** has index 0, **BubbleSort1** has index 2.
 
-## User
-### Register or Login
-```
-FirebaseClient fc = new(null);
-User user = new(<username>);
-fc.RegisterOrLogin(user);
-```
+## WebGL-Specific Build Instructions
+Unity WebGL builds does not inherently support WebGL, so external JSON wrappers will be needed. `FirebaseWebGL` is installed in `/Assets` for such purposes. *.jslib is the javascript method calls that handle JSON data, ensure you expose methods to javascript using the `[DllImport("__Internal")]` and `public static extern` signature for the functions that you want to expose to javascript.
 
-### Update Complete Time (in seconds)
-```
-FirebaseClient fc = new(null);
-user.completeDuration = 60;
-fc.UpdateCompleteDuration(user);
-```
+To build:
+ - write any firebase method calls as you would in `FirebaseDataManager.cs`
+ - Build to WebGL
+ - Add the following section in the build folder **index.html**:
+    ```
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
 
-### Get Leaderboard
-```
-class FirebaseListener : IFirebaseListener
-{
-    public void OnLeaderboardRetrieveCompleted(List<User> users)
-    {
-        foreach(User user in users)
-        {
-            Debug.Log(user.username + " " + user.completeDuration);
-        }
-    }
-}
+    <script>
+        const firebaseConfig = {
+            apiKey: "XXXXX",
+            authDomain: "XXXXX",
+            databaseURL: "https://XXXX.firebaseio.com",
+            projectId: "XXXX",
+            storageBucket: "XXXX",
+            messagingSenderId: "XXXX",
+            appId: "XXXX",
+            measurementId: "XXXX"
+        };
 
-FirebaseListener listener = new();
-FirebaseClient fc = new(listener);
-fc.RetrieveLeaderboard();
-```
+        const firebaseApp = firebase.initializeApp(firebaseConfig);
+        window.database = firebaseApp.database();
+    </script>
+    ```
+- In the same **index.html**, find the code chunk and add the following line:
+
+    ADD `window.unityInstance = unityInstance;` TO `then((unityInstance) => {`
+    ```
+    then((unityInstance) => {
+    window.unityInstance = unityInstance;
+    })
+    ```
+
+    The code chunk should look like:
+    ```
+    script.onload = () => {
+    createUnityInstance(canvas, config, (progress) => {
+        progressBarFull.style.width = 100 * progress + "%";
+            }).then((unityInstance) => {
+            window.unityInstance = unityInstance;
+            loadingBar.style.display = "none";
+            fullscreenButton.onclick = () => {
+                unityInstance.SetFullscreen(1);
+            };
+            }).catch((message) => {
+            alert(message);
+            });
+        };
+    ```

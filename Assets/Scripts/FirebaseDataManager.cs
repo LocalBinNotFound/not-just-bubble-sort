@@ -56,4 +56,14 @@ public class FirebaseDataManager : MonoBehaviour
         Debug.Log("user data upload: " + jsondata);
         FirebaseDatabase.UpdateJSON($"users/{username}", jsondata, "OnDataSaved", "OnDataSaveFailed");
     }
+
+    public void UploadLevelScore(string levelName, string playerName, float timeSpent)
+    {
+        FirebaseDatabase.UploadLevelScore(levelName, playerName, timeSpent.ToString("F2"));
+    }
+
+    public void RetrieveLeaderboard()
+    {
+        FirebaseDatabase.RetrieveLeaderboard();
+    }
 }

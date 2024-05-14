@@ -16,7 +16,6 @@ public class ItemManager : MonoBehaviour {
 
         hintCount = PlayerPrefs.GetInt("Hints");
         autoCompleteCount = PlayerPrefs.GetInt("AutoCompletes");
-        Debug.Log("In item manager, auto complete  count is: " + autoCompleteCount);
         nodeController.UpdateCompleteCountUI();
         nodeController.UpdateHintCountUI();
     }

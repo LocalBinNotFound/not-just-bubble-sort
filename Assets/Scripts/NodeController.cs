@@ -54,7 +54,7 @@ public class NodeController : MonoBehaviour
         }
         else
         {
-            playerName = "Unknown";
+            playerName = "Guest";
         }
 
         InitializeGame();
@@ -90,6 +90,10 @@ public class NodeController : MonoBehaviour
         Vector3 scale = new Vector3(30,32,1);
 
         HashSet<int> generatedNumbers = new HashSet<int>();
+
+        // fix array test
+        // numbersToBeSorted = new int[] { 7, 56, 57, 14, 62, 4, 44, 73, 70, 84 };
+
         for (int i = 0; i < allNodes.Length; i++) {
             Vector3 snapPosition = new Vector3((i + 1) * spacing - (screenWidth / 2) + center.x, center.y, center.z);
             snapPositions[i] = snapPosition;
@@ -100,6 +104,12 @@ public class NodeController : MonoBehaviour
             allNodes[i] = node;
 
             StartCoroutine(ScaleNodeToSize(node.transform, scale, 0.5f));
+
+            // fix array test
+            // TextMeshPro textComponent = node.GetComponentInChildren<TextMeshPro>();
+            // if (textComponent != null) {
+            //      textComponent.text = numbersToBeSorted[i].ToString();
+            // }
 
             int randomNumber;
             do {
@@ -114,7 +124,7 @@ public class NodeController : MonoBehaviour
             numbersToBeSorted[i] = randomNumber;
             }
 
-        swapValidator.SetNumbersToBeSorted(numbersToBeSorted);
+            swapValidator.SetNumbersToBeSorted(numbersToBeSorted);
     }
 
     void Update()
@@ -268,7 +278,8 @@ public class NodeController : MonoBehaviour
         }
 
         if (IsArraySorted()) {
-            //firebaseClient.UploadUserScore(levelName, playerName, Mathf.RoundToInt(timeCounter));
+            float roundedTime = Mathf.Round(timeCounter * 100f) / 100f;
+            //FirebaseDataManager.Instance.UploadLevelScore(levelName, playerName, roundedTime);
 
             youWin.CompleteGame();
             yield break;
