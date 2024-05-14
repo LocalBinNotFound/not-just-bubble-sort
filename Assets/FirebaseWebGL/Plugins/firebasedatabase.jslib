@@ -128,7 +128,7 @@ mergeInto(LibraryManager.library, {
             } else if (!committed) {
                 console.log("Transaction aborted (time was not smaller)");
             } else {
-                console.log("You gor a new record!);
+                console.log("You gor a new record!");
             }
         });
     },
