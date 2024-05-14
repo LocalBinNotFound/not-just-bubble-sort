@@ -110,7 +110,14 @@ public class UIManager : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        PlayerPrefs.SetInt("IsUserSignedIn", 0);
-        PlayerPrefs.Save();
+        if (isUserSignedIn)
+        {
+            string username = PlayerPrefs.GetString("Username", "");
+            if (!string.IsNullOrEmpty(username))
+            {
+                FirebaseDataManager.Instance.SignOutAndSaveData(username);
+            }
+        }
+        PlayerPrefs.DeleteAll();
     }
 }

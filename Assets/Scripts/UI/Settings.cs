@@ -51,7 +51,6 @@ public class Settings : MonoBehaviour
     {
         PlayerPrefs.SetInt("Sounds", 1);
         PlayerPrefs.SetInt("Vibration", 1);
-        PlayerPrefs.DeleteAll();
         SetSounds();
         SetVibration();
     }
