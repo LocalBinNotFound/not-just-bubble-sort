@@ -20,7 +20,6 @@ public class QuickSortValidator : MonoBehaviour, ISwapValidator
     public void SetNumbersToBeSorted(int[] numbersToBeSorted)
     {
         QuickSort(numbersToBeSorted, 0, numbersToBeSorted.Length - 1);
-        Debug.Log(String.Join(",", swapOrders));
     }
 
     private int Partition(int[] arr, int low, int high)

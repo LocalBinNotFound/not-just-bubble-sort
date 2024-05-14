@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class NodeController : MonoBehaviour
 {
@@ -35,7 +36,6 @@ public class NodeController : MonoBehaviour
     private Vector3[] snapPositions;
     private bool isSwapping = false;
 
-    private FirebaseClient firebaseClient;
     private string playerName;
     private float timeCounter;  //in seconds
     public string levelName;
@@ -47,7 +47,6 @@ public class NodeController : MonoBehaviour
         gameOver = FindObjectOfType<GameOver>();
         youWin = FindObjectOfType<YouWin>();
 
-        firebaseClient = new FirebaseClient();
 
         if (PlayerPrefs.HasKey("Username"))
         {
@@ -55,7 +54,7 @@ public class NodeController : MonoBehaviour
         }
         else
         {
-            playerName = "Unknown";
+            playerName = "Guest";
         }
 
         InitializeGame();
@@ -68,7 +67,7 @@ public class NodeController : MonoBehaviour
         livesText.text = $"{itemManager.LifeCount}";
 
         hintsText.text = $"{PlayerPrefs.GetInt("Hints")}";
-        autoCompleteText.text=$"{PlayerPrefs.GetInt("AutoComplete")}";
+        autoCompleteText.text=$"{PlayerPrefs.GetInt("AutoCompletes")}";
         coinsText.text=$"{Wallet.GetAmount()}";
     }
 
@@ -87,8 +86,13 @@ public class NodeController : MonoBehaviour
         float screenWidth = Camera.main.orthographicSize * 2.0f * Screen.width / Screen.height;
         float spacing = screenWidth / (allNodes.Length + 1);
 
-        Vector3 center = new Vector3(-893, 500, 0);
-        Vector3 scale = new Vector3(15,16,1);
+        Vector3 center = new Vector3(-2911, -600, 0);
+        Vector3 scale = new Vector3(30,32,1);
+
+        HashSet<int> generatedNumbers = new HashSet<int>();
+
+        // fix array test
+        // numbersToBeSorted = new int[] { 7, 56, 57, 14, 62, 4, 44, 73, 70, 84 };
 
         for (int i = 0; i < allNodes.Length; i++) {
             Vector3 snapPosition = new Vector3((i + 1) * spacing - (screenWidth / 2) + center.x, center.y, center.z);
@@ -101,7 +105,18 @@ public class NodeController : MonoBehaviour
 
             StartCoroutine(ScaleNodeToSize(node.transform, scale, 0.5f));
 
-            int randomNumber = Random.Range(1, 100);
+            // fix array test
+            // TextMeshPro textComponent = node.GetComponentInChildren<TextMeshPro>();
+            // if (textComponent != null) {
+            //      textComponent.text = numbersToBeSorted[i].ToString();
+            // }
+
+            int randomNumber;
+            do {
+                randomNumber = Random.Range(1, 100);
+            } while (generatedNumbers.Contains(randomNumber));
+            generatedNumbers.Add(randomNumber);
+
             TextMeshPro textComponent = node.GetComponentInChildren<TextMeshPro>();
             if (textComponent != null) {
                 textComponent.text = randomNumber.ToString();
@@ -109,7 +124,7 @@ public class NodeController : MonoBehaviour
             numbersToBeSorted[i] = randomNumber;
             }
 
-        swapValidator.SetNumbersToBeSorted(numbersToBeSorted);
+            swapValidator.SetNumbersToBeSorted(numbersToBeSorted);
     }
 
     void Update()
@@ -263,7 +278,8 @@ public class NodeController : MonoBehaviour
         }
 
         if (IsArraySorted()) {
-            StartCoroutine(firebaseClient.UploadUserScore(levelName, playerName, Mathf.RoundToInt(timeCounter)));
+            float roundedTime = Mathf.Round(timeCounter * 100f) / 100f;
+            FirebaseDataManager.Instance.UploadLevelScore(levelName, playerName, roundedTime);
 
             youWin.CompleteGame();
             yield break;
