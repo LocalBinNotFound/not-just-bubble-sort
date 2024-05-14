@@ -279,7 +279,7 @@ public class NodeController : MonoBehaviour
 
         if (IsArraySorted()) {
             float roundedTime = Mathf.Round(timeCounter * 100f) / 100f;
-            //FirebaseDataManager.Instance.UploadLevelScore(levelName, playerName, roundedTime);
+            FirebaseDataManager.Instance.UploadLevelScore(levelName, playerName, roundedTime);
 
             youWin.CompleteGame();
             yield break;

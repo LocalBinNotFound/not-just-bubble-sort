@@ -87,7 +87,6 @@ mergeInto(LibraryManager.library, {
         var parsedUsername = UTF8ToString(username);
         var userPath = 'users/' + parsedUsername;
 
-
         window.database.ref(userPath).once('value').then(function(snapshot) {
             if (snapshot.exists()) {
                 unityInstance.Module.SendMessage("UserDataObject", 'UpdateUserData', JSON.stringify(snapshot.val()));
@@ -129,7 +128,7 @@ mergeInto(LibraryManager.library, {
             } else if (!committed) {
                 console.log("Transaction aborted (time was not smaller)");
             } else {
-                console.log("Time updated to: ", snapshot.val());
+                console.log("You gor a new record!);
             }
         });
     },
